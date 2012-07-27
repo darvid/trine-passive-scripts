@@ -24,7 +24,6 @@ class TransmogSet(DeclarativeBase):
     waist_id = Column(u"waist_id", Integer())
     legs_id = Column(u"legs_id", Integer())
     boots_id = Column(u"boots_id", Integer())
-    th_id = Column(u"th_id", Integer())
     mh_id = Column(u"mh_id", Integer())
     oh_id = Column(u"oh_id", Integer())
 
