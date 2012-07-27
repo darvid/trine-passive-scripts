@@ -31,9 +31,7 @@ def merge(session):
     # store item slot numbers, since they aren't autoincrement in the db
     slots = dict(zip(CLASS_NAMES, [0] * 10))
     for class_name in CLASS_NAMES:
-        print class_name
         trainer = get_trainer(session, class_name)
-        print trainer.name
         # only modify npcflag if trainer isn't already a vendor, to avoid
         # conflicts with a custom npcflag
         if not trainer.npcflag & NpcFlag.VENDOR == NpcFlag.VENDOR:
@@ -47,7 +45,6 @@ def merge(session):
         c_id = ChrClasses.find_class(class_name, method="display_name").binary
         # filter all glyphs by class
         for glyph in get_all_glyphs(session, c_id):
-            print trainer.entry, glyph.entry, slots[class_name]
             session.merge(NpcVendor(entry=trainer.entry, item=glyph.entry,
                 slot=slots[class_name]))
             slots[class_name] += 1
