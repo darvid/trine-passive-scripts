@@ -14,6 +14,8 @@ def get_trainer(session, class_name):
             trainer.trainer_class = ChrClasses.DEATH_KNIGHT.id
             trainer.npcflag += NpcFlag.CLASS_TRAINER
             session.merge(trainer)
+    if not trainer.npcflag & NpcFlag.QUEST_GIVER == NpcFlag.QUEST_GIVER:
+        trainer.npcflag = trainer.npcflag + NpcFlag.QUEST_GIVER
     return trainer
 
 
@@ -24,6 +26,8 @@ def get_all_glyphs(session, class_id=None):
     if class_id is not None:
         query = query.filter(ItemTemplate.AllowableClass == class_id)
     for glyph in query.order_by(ItemTemplate.name):
+        glyph.SellPrice = 0
+        session.merge(glyph)
         yield glyph
 
 
@@ -38,6 +42,7 @@ def merge(session):
             trainer.npcflag += NpcFlag.VENDOR
         if not trainer.npcflag & NpcFlag.GOSSIP == NpcFlag.GOSSIP:
             trainer.npcflag += NpcFlag.GOSSIP
+        trainer.scale = 1.5
         # delete all items associated with this npc
         session.query(NpcVendor).\
             filter(NpcVendor.entry == trainer.entry).delete()
