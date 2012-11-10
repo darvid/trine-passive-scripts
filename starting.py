@@ -6,32 +6,44 @@ from models.world import ItemTemplate, Playercreateinfo, \
     PlayercreateinfoItem, NpcVendor
 
 
+ZM_HORDE = {
+    "map": 530,
+    "zone": 3521,
+    "position_x": 252.989853,
+    "position_y": 7778.522949,
+    "position_z": 23.224953,
+    "orientation": 1.469257
+}
+ZM_ALLIANCE = {
+    "map": 530,
+    "zone": 3521,
+    "position_x": 281.377441,
+    "position_y": 5994.965820,
+    "position_z": 144.731903,
+    "orientation": 1.542708
+}
+GRIZZLEMAW_AIR = {
+    "map": 571,
+    "zone": 394,
+    "position_x": 4065.254639,
+    "position_y": -3738.837891,
+    "position_z": 348.051422,
+    "orientation": 3.877643,
+}
+
+
 # Starting locations for each faction
 FACTION_SPAWNS = {
-    "HORDE": {
-        "map": 530, 
-        "zone": 3521, 
-        "position_x": 252.989853, 
-        "position_y": 7778.522949, 
-        "position_z": 23.224953, 
-        "orientation": 1.469257
-    },
+    "HORDE": GRIZZLEMAW_AIR,
+    "ALLIANCE": GRIZZLEMAW_AIR,
     # "ALLIANCE": {
-    #     "map": 530, 
-    #     "zone": 3521, 
-    #     "position_x": 278.586060, 
-    #     "position_y": 5945.748535, 
+    #     "map": 530,
+    #     "zone": 3521,
+    #     "position_x": 278.586060,
+    #     "position_y": 5945.748535,
     #     "position_z": 149.781937,
     #     "orientation": 1.284102
     # }
-    "ALLIANCE": {
-        "map": 530, 
-        "zone": 3521, 
-        "position_x": 281.377441, 
-        "position_y": 5994.965820, 
-        "position_z": 144.731903,
-        "orientation": 1.542708
-    }
 }
 
 
@@ -50,29 +62,30 @@ STARTING_ITEMS = [
     # give everyone except hunters 4 bags
     [
         ChrRaces.PLAYABLE,
-        [r for r in ChrClasses.ALL if r != ChrClasses.HUNTER],
+        # [r for r in ChrClasses.ALL if r != ChrClasses.HUNTER],
+        ChrClasses.ALL,
         (
             ("Portable Hole", 4),
         )
     ],
     # give hunters 3 bags + quiver
-    [
-        ChrRaces.PLAYABLE,
-        (ChrClasses.HUNTER,),
-        (
-            ("Portable Hole", 3),
-            "Nerubian Reinforced Quiver"
-        )
-    ],
+    # [
+    #     ChrRaces.PLAYABLE,
+    #     (ChrClasses.HUNTER,),
+    #     (
+    #         ("Portable Hole", 3),
+    #         "Nerubian Reinforced Quiver"
+    #     )
+    # ],
     # give both factions nether rays
-    [
-        ChrRaces.PLAYABLE,
-        ChrClasses.ALL,
-        (
-            lambda: choice(["Blue", "Silver", "Red", "Purple", "Green"]) + 
-                " Riding Nether Ray",
-        )
-    ],
+    # [
+    #     ChrRaces.PLAYABLE,
+    #     ChrClasses.ALL,
+    #     (
+    #         lambda: choice(["Blue", "Silver", "Red", "Purple", "Green"]) +
+    #             " Riding Nether Ray",
+    #     )
+    # ],
     [
         ChrRaces.HORDE,
         ChrClasses.ALL,
@@ -161,6 +174,8 @@ def merge_starting_items(session):
             item_name, amount = item_name
         else:
             amount = 1
+        if callable(item_name): item_name = item_name()
+        print item_name
         item = session.query(ItemTemplate).\
             filter_by(name=item_name).\
             order_by(desc(ItemTemplate.RequiredSkillRank)).\
